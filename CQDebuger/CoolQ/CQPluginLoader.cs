@@ -1,21 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net;
+using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Security.RightsManagement;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
-namespace CQDebuger
+namespace CQDebuger.CoolQ
 {
-    public class PluginLoader
+    public class CQPluginLoader
     {
+        public static List<CQPlugin> plugins = new List<CQPlugin>();
+
         [DllImport("kernel32.dll")]
         public static extern IntPtr LoadLibrary(string path);
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
@@ -24,16 +20,18 @@ namespace CQDebuger
         [DllImport("kernel32.dll", CharSet = CharSet.Ansi, SetLastError = true)]
         public static extern IntPtr GetProcAddress(IntPtr hModule, string lpProcName);
 
-        public static PluginLoader Instance;
+        public static CQPluginLoader Instance;
 
-        static PluginLoader()
+        static CQPluginLoader()
         {
-            Instance = new PluginLoader();
+            Instance = new CQPluginLoader();
         }
 
-        public static void LoadPlugin(string pluginPath)
+        public static CQPlugin LoadPlugin(string pluginPath)
         {
-            Instance.LoadPluginInner(pluginPath);
+            var plugin = Instance.LoadPluginInner(pluginPath);
+            plugins.Add(plugin);
+            return plugin;
         }
         private object GetProcAs(IntPtr dllModule, string apiName, Type type)
         {
@@ -52,24 +50,20 @@ namespace CQDebuger
             return Marshal.PtrToStringAnsi(addr);
         }
 
-        private void AddEventToPlugin(Plugin plugin, PluginEvent pluginEvent)
+        private void AddEventToPlugin(CQPlugin plugin, PluginEvent pluginEvent)
         {
-            var eventTypeName = pluginEvent.type.ToString();
-            var fieldNameCharArray = eventTypeName.ToCharArray();
-            fieldNameCharArray[0] = char.ToLower(eventTypeName[0]);
-            var fieldName = new string(fieldNameCharArray);
-
-            var fieldInfo = plugin.GetType().GetField(fieldName);
+            var eventType = pluginEvent.type;
+            var fieldInfo = CQPlugin.GetEvent(eventType);
 
             if (fieldInfo == null)
-                throw new MissingFieldException("未找到事件 " + fieldName);
+                throw new MissingFieldException("未找到事件 " + eventType);
 
             fieldInfo.SetValue(
                 plugin, 
                 GetProcAs(plugin.dllModule, pluginEvent.function, fieldInfo.FieldType));
         }
 
-        private Plugin LoadPluginInner(string pluginPath)
+        private CQPlugin LoadPluginInner(string pluginPath)
         {
             var dllPath = pluginPath + ".dll";
             var jsonPath = pluginPath + ".json";
@@ -79,12 +73,14 @@ namespace CQDebuger
             if (!File.Exists(jsonPath))
                 throw new ArgumentException("未找到文件 " + jsonPath);
 
-            var plugin = new Plugin();
+            var plugin = new CQPlugin
+            {
+                dllModule = LoadLibrary(dllPath)
+            };
 
             //加载Dll
-            plugin.dllModule = LoadLibrary(dllPath);
-            plugin.appInfo = GetProcAs<Plugin.AppInfoDelegate>(plugin.dllModule, "AppInfo");
-            plugin.initialize = GetProcAs<Plugin.InitializeDelegate>(plugin.dllModule, "Initialize");
+            plugin.appInfo = GetProcAs<CQEvent.AppInfoDelegate>(plugin.dllModule, "AppInfo");
+            plugin.initialize = GetProcAs<CQEvent.InitializeDelegate>(plugin.dllModule, "Initialize");
 
             //获取插件基本信息
             var appInfo = GetString(plugin.appInfo());
@@ -103,15 +99,15 @@ namespace CQDebuger
             var jsonFileReader = new StreamReader(jsonFile);
             var jsonStr = jsonFileReader.ReadToEnd();
             jsonStr = jsonStr.Replace("\"event\"", "\"eventList\"");
-            var pluginInfo = JsonConvert.DeserializeObject<PluginInfo>(jsonStr);
+            plugin.info = JsonConvert.DeserializeObject<PluginInfo>(jsonStr);
 
             //判断Api版本
-            if (pluginInfo.apiver != plugin.apiVersion)
+            if (plugin.info.apiver != plugin.apiVersion)
                 throw new ArgumentException("Json中定义的ApiVersion为 " + plugin.apiVersion +
                                             " 但是AppInfo当中的ApiVersion为" + plugin.apiVersion);
 
             //获取事件信息
-            foreach (var pluginEvent in pluginInfo.eventList)
+            foreach (var pluginEvent in plugin.info.eventList)
                 AddEventToPlugin(plugin, pluginEvent);
 
             //插件加载完成

@@ -1,0 +1,114 @@
+﻿<Window x:Class="CQDebuger.Window.DebugWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CQDebuger"
+        xmlns:coolQ="clr-namespace:CQDebuger.CoolQ"
+        xmlns:control="clr-namespace:CQDebuger.Control"
+        mc:Ignorable="d"
+        Title="酷Q调试工具 Beta 0.1.0" Height="800" Width="1200" Closing="OnWindowClosing" Loaded="OnWindowLoaded">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+        <ListBox x:Name="PluginList" Margin="10,60,10,10" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+            <ListBox.ItemTemplate>
+                <DataTemplate DataType="coolQ:PluginInfo">
+                    <StackPanel Orientation ="Vertical">
+                        <StackPanel Orientation ="Horizontal">
+                            <TextBlock Text = "{Binding Name}" FontSize ="18" Foreground="Black"/>
+                        </StackPanel>
+                        <StackPanel Orientation ="Horizontal">
+                            <TextBlock Text ="插件版本: " FontSize ="12" Foreground="Black"/>
+                            <TextBlock Text = "{Binding Version}" FontSize ="12" Foreground="Gray"/>
+                        </StackPanel>
+                        <StackPanel Orientation ="Horizontal">
+                            <TextBlock Text ="插件作者: " FontSize ="12" Foreground="Black"/>
+                            <TextBlock Text = "{Binding Author}" FontSize ="12" Foreground="Gray"/>
+                        </StackPanel>
+                        <DockPanel>
+                            <TextBlock DockPanel.Dock="Left" Text ="插件描述: " FontSize ="12" Foreground="Black"/>
+                            <TextBlock DockPanel.Dock="Right" Text = "{Binding Description}" FontSize ="12" Foreground="Gray" TextWrapping = "WrapWithOverflow"/>
+                        </DockPanel>
+                        <Separator />
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <Label Grid.Column="0" Content="插件列表" Margin="0,10,0,0" FontSize="24" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+        <ListBox x:Name="LogList" Grid.Column="2" Margin="10,60,10,10">
+            <ListBox.ItemTemplate>
+                <DataTemplate DataType="local:DebugLog">
+                    <StackPanel Orientation ="Horizontal">
+                        <TextBlock Text ="[" FontSize ="12" Foreground="Black"/>
+                        <TextBlock Text ="{Binding LogTime}" FontSize ="12" Foreground="Black"/>
+                        <TextBlock Text ="][" FontSize ="12" Foreground="Black"/>
+                        <TextBlock Text ="{Binding Category}" FontSize ="12" Foreground="Black"/>
+                        <TextBlock Text ="] " FontSize ="12" Foreground="Black"/>
+                        <TextBlock Text ="{Binding Msg}" FontSize ="12" Foreground="Black"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <Label Grid.Column="2" Content="日志" Margin="10,10,10,0" FontSize="24" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+        <TabControl Grid.Column="1" Margin="10,60,10,10" FontSize ="14">
+            <TabItem Header="私聊消息">
+                <Grid Background="#FFE5E5E5">
+                    <Button x:Name ="PrivateMsgSend" Content="发送" Margin="0,0,10,10" HorizontalAlignment="Right" Width="75" Height="22" VerticalAlignment="Bottom" Click="PrivateMsgSend_Click"/>
+                    <WrapPanel HorizontalAlignment="Left" Height="100" Margin="84,78,0,0" VerticalAlignment="Top" Width="100"/>
+                    <StackPanel Margin="10,9,10,37">
+                        <control:TextBoxWithLabel x:Name ="PrivateMsgSubType" TextBoxName="subType:" Margin="10,10"/>
+                        <control:TextBoxWithLabel x:Name ="PrivateMsgMsgId" TextBoxName="msgId:" Margin="10,10"/>
+                        <control:TextBoxWithLabel x:Name ="PrivateMsgFromQq" TextBoxName="fromQQ:" Margin="10,10"/>
+                        <control:TextBoxWithLabel x:Name ="PrivateMsgMsg" TextBoxName="msg:" Margin="10,10"/>
+                        <control:TextBoxWithLabel x:Name ="PrivateMsgFont" TextBoxName="font:" Margin="10,10"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="群消息">
+                <Grid Background="#FFE5E5E5">
+                    <Button x:Name ="GroupMsgSend" Content="发送" Margin="0,0,10,10" HorizontalAlignment="Right" Width="75" Height="22" VerticalAlignment="Bottom" Click="GroupMsgSend_Click"/>
+                    <WrapPanel HorizontalAlignment="Left" Height="100" Margin="84,78,0,0" VerticalAlignment="Top" Width="100"/>
+                    <StackPanel Margin="10,9,10,37">
+                        <control:TextBoxWithLabel x:Name ="GroupMsgSubType" TextBoxName="subType:" Margin="10,10"/>
+                        <control:TextBoxWithLabel x:Name ="GroupMsgMsgId" TextBoxName="msgId:" Margin="10,10"/>
+                        <control:TextBoxWithLabel x:Name ="GroupMsgFromGroup" TextBoxName="fromGroup:" Margin="10,10"/>
+                        <control:TextBoxWithLabel x:Name ="GroupMsgFromQq" TextBoxName="fromQQ:" Margin="10,10"/>
+                        <control:TextBoxWithLabel x:Name ="GroupMsgFromAnonymous" TextBoxName="fromAnonymous:" Margin="10,10"/>
+                        <control:TextBoxWithLabel x:Name ="GroupMsgMsg" TextBoxName="msg:" Margin="10,10"/>
+                        <control:TextBoxWithLabel x:Name ="GroupMsgFont" TextBoxName="font:" Margin="10,10"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="讨论组消息">
+                <Grid Background="#FFE5E5E5"/>
+            </TabItem>
+            <TabItem Header="群文件上传">
+                <Grid Background="#FFE5E5E5"/>
+            </TabItem>
+            <TabItem Header="群管理员变动">
+                <Grid Background="#FFE5E5E5"/>
+            </TabItem>
+            <TabItem Header="群成员减少">
+                <Grid Background="#FFE5E5E5"/>
+            </TabItem>
+            <TabItem Header="群成员增加">
+                <Grid Background="#FFE5E5E5"/>
+            </TabItem>
+            <TabItem Header="好友添加">
+                <Grid Background="#FFE5E5E5"/>
+            </TabItem>
+            <TabItem Header="加好友请求">
+                <Grid Background="#FFE5E5E5"/>
+            </TabItem>
+            <TabItem Header="加群请求／邀请">
+                <Grid Background="#FFE5E5E5"/>
+            </TabItem>
+        </TabControl>
+        <Label Grid.Column="1" Content="事件发送" Margin="99,15,100,0" FontSize="24" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+
+    </Grid>
+</Window>
