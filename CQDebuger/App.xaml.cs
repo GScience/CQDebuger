@@ -47,7 +47,7 @@ namespace CQDebuger
             if (!Directory.Exists(pluginDir))
             {
                 Directory.CreateDirectory(pluginDir);
-                MessageBox.Show("请将需要调试的插件放到 " + pluginDir + " 目录下，并保证dll和json文件具有相同的名称。");
+                AddLog(DebugerLogCategory, "请将需要调试的插件放到 " + pluginDir + " 目录下，并保证dll和json文件具有相同的名称。");
             }
 
             foreach (var filePath in Directory.GetFiles(pluginDir, "*.json"))
