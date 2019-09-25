@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Security.RightsManagement;
 
 namespace CQDebuger.CoolQ
 {
@@ -25,7 +24,7 @@ namespace CQDebuger.CoolQ
         CqStart = 1001,
         CqExit = 1002,
         PluginEnable = 1003,
-        PluginDisable = 1004,
+        PluginDisable = 1004
     }
 
     public struct PluginEvent
@@ -39,14 +38,14 @@ namespace CQDebuger.CoolQ
 
     public class PluginInfo
     {
-        public int rev;
         public int apiver;
-        public string name;
-        public string version;
-        public int versionId;
         public string author;
         public string description;
         public List<PluginEvent> eventList;
+        public string name;
+        public int rev;
+        public string version;
+        public int versionId;
 
         public string Name => name;
         public string Version => version;
@@ -56,37 +55,38 @@ namespace CQDebuger.CoolQ
 
     public class CQPlugin
     {
-        public int authCode;
-        public PluginInfo info;
+        public CQEvent.AddFriendRequest addFriendRequest;
+        public CQEvent.AddGroupRequest addGroupRequest;
 
         public int apiVersion;
         public string appId;
 
-        public IntPtr dllModule;
-
         public CQEvent.AppInfoDelegate appInfo;
-        public CQEvent.InitializeDelegate initialize;
-
-        public CQEvent.PluginEnable pluginEnable;
-        public CQEvent.PluginDisable pluginDisable;
-        public CQEvent.CqStart cqStart;
+        public int authCode;
         public CQEvent.CqExit cqExit;
-
-        public CQEvent.PrivateMsg privateMsg;
-        public CQEvent.GroupMsg groupMsg;
+        public CQEvent.CqStart cqStart;
         public CQEvent.DiscussMsg discussMsg;
-        public CQEvent.GroupUpload groupUpload;
+
+        public IntPtr dllModule;
+        public CQEvent.FriendAdd friendAdd;
         public CQEvent.GroupAdmin groupAdmin;
         public CQEvent.GroupMemberDecrease groupMemberDecrease;
         public CQEvent.GroupMemberIncrease groupMemberIncrease;
-        public CQEvent.FriendAdd friendAdd;
-        public CQEvent.AddFriendRequest addFriendRequest;
-        public CQEvent.AddGroupRequest addGroupRequest;
+        public CQEvent.GroupMsg groupMsg;
+        public CQEvent.GroupUpload groupUpload;
+        public PluginInfo info;
+        public CQEvent.InitializeDelegate initialize;
+        public CQEvent.PluginDisable pluginDisable;
+
+        public CQEvent.PluginEnable pluginEnable;
+
+        public CQEvent.PrivateMsg privateMsg;
 
         public CQPlugin()
         {
             authCode = new Random().Next();
         }
+
         public static FieldInfo GetEvent(PluginEventType eventType)
         {
             var eventTypeName = eventType.ToString();

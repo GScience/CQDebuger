@@ -2,12 +2,13 @@
 {
     public static class CQPBridge
     {
-        public const string BridgeDebugCategory = "酷Q接收";
+        public delegate int AddLog(int auth_code, int log_level, string category, string log_msg);
 
-        public delegate int SendPrivateMsg(int auth_code, long qq, string msg);
         public delegate int SendGroupMsg(int auth_code, long group_id, string msg);
 
-        public delegate int AddLog(int auth_code, int log_level, string category, string log_msg);
+        public delegate int SendPrivateMsg(int auth_code, long qq, string msg);
+
+        public const string BridgeDebugCategory = "酷Q接收";
 
         public static SendPrivateMsg sendPrivateMsg = (code, qq, msg) =>
         {

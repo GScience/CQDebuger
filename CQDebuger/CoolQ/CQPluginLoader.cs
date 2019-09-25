@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using Newtonsoft.Json;
 
@@ -12,14 +10,6 @@ namespace CQDebuger.CoolQ
     {
         public static List<CQPlugin> plugins = new List<CQPlugin>();
 
-        [DllImport("kernel32.dll")]
-        public static extern IntPtr LoadLibrary(string path);
-        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        public static extern IntPtr GetModuleHandle(string lpLibFileNmae);
-
-        [DllImport("kernel32.dll", CharSet = CharSet.Ansi, SetLastError = true)]
-        public static extern IntPtr GetProcAddress(IntPtr hModule, string lpProcName);
-
         public static CQPluginLoader Instance;
 
         static CQPluginLoader()
@@ -27,12 +17,22 @@ namespace CQDebuger.CoolQ
             Instance = new CQPluginLoader();
         }
 
+        [DllImport("kernel32.dll")]
+        public static extern IntPtr LoadLibrary(string path);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        public static extern IntPtr GetModuleHandle(string lpLibFileNmae);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Ansi, SetLastError = true)]
+        public static extern IntPtr GetProcAddress(IntPtr hModule, string lpProcName);
+
         public static CQPlugin LoadPlugin(string pluginPath)
         {
             var plugin = Instance.LoadPluginInner(pluginPath);
             plugins.Add(plugin);
             return plugin;
         }
+
         private object GetProcAs(IntPtr dllModule, string apiName, Type type)
         {
             var address = GetProcAddress(dllModule, apiName);
@@ -40,6 +40,7 @@ namespace CQDebuger.CoolQ
                 return null;
             return Marshal.GetDelegateForFunctionPointer(address, type);
         }
+
         private T GetProcAs<T>(IntPtr dllModule, string apiName) where T : class
         {
             return (T) GetProcAs(dllModule, apiName, typeof(T));
@@ -59,7 +60,7 @@ namespace CQDebuger.CoolQ
                 throw new MissingFieldException("未找到事件 " + eventType);
 
             fieldInfo.SetValue(
-                plugin, 
+                plugin,
                 GetProcAs(plugin.dllModule, pluginEvent.function, fieldInfo.FieldType));
         }
 

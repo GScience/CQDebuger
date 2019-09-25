@@ -1,24 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Navigation;
 using CQDebuger.CoolQ;
 using CQDebuger.Window;
 
 namespace CQDebuger
 {
     /// <summary>
-    /// App.xaml 的交互逻辑
+    ///     App.xaml 的交互逻辑
     /// </summary>
     public partial class App : Application
     {
-        public DebugWindow debugWindow;
+        public const string DebugerLogCategory = "酷Q调试器";
+
+        public App()
+        {
+            LoadCQP();
+            LogWhenThrow(LoadPlugins);
+
+            LogWhenThrow(() => CQStart?.Invoke());
+            LogWhenThrow(() => PluginEnable?.Invoke());
+        }
 
         public event CQEvent.AppInfoDelegate AppInfo;
         public event CQEvent.InitializeDelegate Initialize;
@@ -47,7 +49,7 @@ namespace CQDebuger
                 Directory.CreateDirectory(pluginDir);
                 MessageBox.Show("请将需要调试的插件放到 " + pluginDir + " 目录下，并保证dll和json文件具有相同的名称。");
             }
-            
+
             foreach (var filePath in Directory.GetFiles(pluginDir, "*.json"))
             {
                 var pluginPath = filePath.Remove(filePath.LastIndexOf(".", StringComparison.Ordinal));
@@ -76,21 +78,33 @@ namespace CQDebuger
 
         private void LoadCQP()
         {
-            CQPluginLoader.LoadLibrary("CQP.dll");
+            if (CQPluginLoader.LoadLibrary("CQP.dll").ToInt32() == 0)
+                MessageBox.Show("未能找到 CQP.dll ，调试器运行将出现未预期的错误。");
         }
 
-        public App()
+        public static void LogWhenThrow(Action action, bool throwWhenError = false)
         {
-            LoadCQP();
-            LoadPlugins();
+            try
+            {
+                action();
+            }
+            catch (Exception e)
+            {
+                AddLog(DebugerLogCategory, "运行时出现错误，可能是用户参数问题，也可能是程序内部或插件问题：\n" + e);
 
-            CQStart?.Invoke();
-            PluginEnable?.Invoke();
+                if (throwWhenError)
+                    throw;
+            }
         }
 
         public static void AddLog(string category, string msg)
         {
-            DebugWindow.AddLog(category, msg);
+            var debugLog = new DebugLog(category, msg);
+
+            if (DebugWindow.Instance != null)
+                DebugWindow.Instance.AddLog(debugLog);
+
+            Console.WriteLine(debugLog.ToString());
         }
 
         public static void GroupMsgEvent(
@@ -102,8 +116,9 @@ namespace CQDebuger
             string msg,
             int font)
         {
-            ((App)Current).GroupMsg(subType, msgId, fromGroup, fromQQ, fromAnonymous, msg, font);
+            LogWhenThrow(() => ((App) Current).GroupMsg(subType, msgId, fromGroup, fromQQ, fromAnonymous, msg, font));
         }
+
         public static void PrivateMsgEvent(
             int subType,
             int msgId,
@@ -111,7 +126,7 @@ namespace CQDebuger
             string msg,
             int font)
         {
-            ((App)Current).PrivateMsg(subType, msgId, fromQQ, msg, font);
+            LogWhenThrow(() => ((App) Current).PrivateMsg(subType, msgId, fromQQ, msg, font));
         }
     }
 }
