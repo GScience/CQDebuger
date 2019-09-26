@@ -66,8 +66,8 @@ namespace CQDebuger.CoolQ
 
         private CQPlugin LoadPluginInner(string pluginPath)
         {
-            var dllPath = pluginPath + ".dll";
-            var jsonPath = pluginPath + ".json";
+            var dllPath = pluginPath + "app.dll";
+            var jsonPath = pluginPath + "app.json";
 
             if (!File.Exists(dllPath))
                 throw new ArgumentException("未找到文件 " + dllPath);

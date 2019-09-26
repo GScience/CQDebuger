@@ -50,11 +50,17 @@ namespace CQDebuger
                 AddLog(DebugerLogCategory, "请将需要调试的插件放到 " + pluginDir + " 目录下，并保证dll和json文件具有相同的名称。");
             }
 
-            foreach (var filePath in Directory.GetFiles(pluginDir, "*.json"))
+            foreach (var pluginPath in Directory.GetDirectories(pluginDir))
             {
-                var pluginPath = filePath.Remove(filePath.LastIndexOf(".", StringComparison.Ordinal));
-                var plugin = CQPluginLoader.LoadPlugin(pluginPath);
+                var plugin = CQPluginLoader.LoadPlugin(pluginPath + "\\");
 
+                var dirName = pluginPath.Substring(pluginPath.LastIndexOf("\\", StringComparison.Ordinal) + 1);
+
+                if (plugin.appId != dirName)
+                {
+                    AddLog(DebugerLogCategory, "插件ID \"" + plugin.appId + "\" 与其所在文件夹名不相符， 文件夹名为 \"" + dirName + "\"");
+                    continue;
+                }
                 AppInfo += plugin.appInfo;
                 Initialize += plugin.initialize;
                 PluginEnable += plugin.pluginEnable;
