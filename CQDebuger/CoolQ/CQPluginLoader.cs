@@ -26,6 +26,22 @@ namespace CQDebuger.CoolQ
         [DllImport("kernel32.dll", CharSet = CharSet.Ansi, SetLastError = true)]
         public static extern IntPtr GetProcAddress(IntPtr hModule, string lpProcName);
 
+        public static bool CheckAuthCodePermission(int authCode, int auth)
+        {
+            foreach (var plugin in plugins)
+            {
+                if (plugin.authCode != authCode)
+                    continue;
+
+                if (plugin.info.auth.Contains(auth))
+                    return true;
+
+                return false;
+            }
+
+            return false;
+        }
+
         public static CQPlugin LoadPlugin(string pluginPath)
         {
             var plugin = Instance.LoadPluginInner(pluginPath);

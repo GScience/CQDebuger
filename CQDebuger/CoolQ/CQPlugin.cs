@@ -42,6 +42,7 @@ namespace CQDebuger.CoolQ
         public string author;
         public string description;
         public List<PluginEvent> eventList;
+        public List<int> auth;
         public string name;
         public int rev;
         public string version;

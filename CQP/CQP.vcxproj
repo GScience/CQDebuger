@@ -94,6 +94,14 @@
     <Link>
       <AdditionalDependencies />
     </Link>
+    <PreBuildEvent>
+      <Command>if exist $(SolutionDir)CQDebuger\bin\$(Configuration)\CQP.dll (
+del $(SolutionDir)CQDebuger\bin\$(Configuration)\CQP.dll
+)</Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>copy $(TargetPath) $(SolutionDir)CQDebuger\bin\$(Configuration)\CQP.dll</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -104,6 +112,14 @@
     <Link>
       <AdditionalDependencies />
     </Link>
+    <PreBuildEvent>
+      <Command>if exist $(SolutionDir)CQDebuger\bin\$(Configuration)\CQP.dll (
+del $(SolutionDir)CQDebuger\bin\$(Configuration)\CQP.dll
+)</Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>copy $(TargetPath) $(SolutionDir)CQDebuger\bin\$(Configuration)\CQP.dll</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -113,6 +129,14 @@
     <Link>
       <AdditionalDependencies />
     </Link>
+    <PreBuildEvent>
+      <Command>if exist $(SolutionDir)CQDebuger\bin\$(Configuration)\CQP.dll (
+del $(SolutionDir)CQDebuger\bin\$(Configuration)\CQP.dll
+)</Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>copy $(TargetPath) $(SolutionDir)CQDebuger\bin\$(Configuration)\CQP.dll</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -122,6 +146,14 @@
     <Link>
       <AdditionalDependencies />
     </Link>
+    <PreBuildEvent>
+      <Command>if exist $(SolutionDir)CQDebuger\bin\$(Configuration)\CQP.dll (
+del $(SolutionDir)CQDebuger\bin\$(Configuration)\CQP.dll
+)</Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>copy $(TargetPath) $(SolutionDir)CQDebuger\bin\$(Configuration)\CQP.dll</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CQPExport.cpp" />
