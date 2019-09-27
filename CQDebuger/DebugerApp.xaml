@@ -1,4 +1,4 @@
-﻿<Application x:Class="CQDebuger.App"
+﻿<Application x:Class="CQDebuger.DebugerApp"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:CQDebuger"

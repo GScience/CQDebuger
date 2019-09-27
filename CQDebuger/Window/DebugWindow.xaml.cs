@@ -27,7 +27,7 @@ namespace CQDebuger.Window
 
         public PluginInfo GetSelectedPlugin => (PluginInfo) PluginList.SelectedItem;
 
-        public void AddLog(DebugLog debugLog)
+        public void AddLog(CQLog debugLog)
         {
             LogList.Items.Add(debugLog);
             LogList.ScrollIntoView(LogList.Items[LogList.Items.Count - 1]);
@@ -45,7 +45,7 @@ namespace CQDebuger.Window
 
         private void GroupMsgSend_Click(object sender, RoutedEventArgs e)
         {
-            App.LogWhenThrow(() => App.GroupMsgEvent(
+            DebugerApp.LogWhenThrow(() => DebugerApp.GroupMsgEvent(
                 int.Parse(GroupMsgSubType.TextBoxText),
                 int.Parse(GroupMsgMsgId.TextBoxText),
                 long.Parse(GroupMsgFromGroup.TextBoxText),
@@ -57,7 +57,7 @@ namespace CQDebuger.Window
 
         private void PrivateMsgSend_Click(object sender, RoutedEventArgs e)
         {
-            App.LogWhenThrow(() => App.PrivateMsgEvent(
+            DebugerApp.LogWhenThrow(() => DebugerApp.PrivateMsgEvent(
                 int.Parse(PrivateMsgSubType.TextBoxText),
                 int.Parse(PrivateMsgMsgId.TextBoxText),
                 long.Parse(PrivateMsgFromQq.TextBoxText),

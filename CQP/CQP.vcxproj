@@ -156,6 +156,7 @@ del $(SolutionDir)CQDebuger\bin\$(Configuration)\CQP.dll
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CQP.cpp" />
     <ClCompile Include="CQPExport.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -43,14 +43,14 @@
                HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
         <ListBox x:Name="LogList" Grid.Column="2" Margin="10,60,10,10">
             <ListBox.ItemTemplate>
-                <DataTemplate DataType="local:DebugLog">
+                <DataTemplate DataType="coolQ:CQLog">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="[" FontSize="12" Foreground="Black" />
-                        <TextBlock Text="{Binding LogTime}" FontSize="12" Foreground="Black" />
-                        <TextBlock Text="][" FontSize="12" Foreground="Black" />
-                        <TextBlock Text="{Binding Category}" FontSize="12" Foreground="Black" />
-                        <TextBlock Text="] " FontSize="12" Foreground="Black" />
-                        <TextBlock Text="{Binding Msg}" FontSize="12" Foreground="Black" />
+                        <TextBlock Text="[" FontSize="12" Foreground="{Binding LogBrush}" />
+                        <TextBlock Text="{Binding LogTime}" FontSize="12" Foreground="{Binding LogBrush}" />
+                        <TextBlock Text="][" FontSize="12" Foreground="{Binding LogBrush}" />
+                        <TextBlock Text="{Binding Category}" FontSize="12" Foreground="{Binding LogBrush}" />
+                        <TextBlock Text="] " FontSize="12" Foreground="{Binding LogBrush}" />
+                        <TextBlock Text="{Binding Msg}" FontSize="12" Foreground="{Binding LogBrush}" />
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>

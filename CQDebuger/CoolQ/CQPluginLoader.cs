@@ -26,20 +26,36 @@ namespace CQDebuger.CoolQ
         [DllImport("kernel32.dll", CharSet = CharSet.Ansi, SetLastError = true)]
         public static extern IntPtr GetProcAddress(IntPtr hModule, string lpProcName);
 
-        public static bool CheckAuthCodePermission(int authCode, int auth)
+        public static CQPlugin GetPluginByAuthCode(int authCode)
         {
             foreach (var plugin in plugins)
             {
-                if (plugin.authCode != authCode)
-                    continue;
+                if (plugin.authCode == authCode)
+                    return plugin;
+            }
 
-                if (plugin.info.auth.Contains(auth))
-                    return true;
+            return null;
+        }
 
+        public static bool CheckAuthCodePermission(int authCode, int auth)
+        {
+            var plugin = GetPluginByAuthCode(authCode);
+            if (plugin == null)
+            {
+                DebugerApp.AddLog(CQLogLevel.Warning, "非法操作",$"试图通过未知AppId({authCode})调用函数");
                 return false;
             }
 
-            return false;
+            if (auth == -1)
+                return true;
+
+            if (!plugin.info.auth.Contains(auth))
+            {
+                DebugerApp.AddLog(CQLogLevel.Warning, "非法操作", $"应用 {authCode} 不具有权限： {auth}");
+                return false;
+            }
+
+            return true;
         }
 
         public static CQPlugin LoadPlugin(string pluginPath)
@@ -92,7 +108,8 @@ namespace CQDebuger.CoolQ
 
             var plugin = new CQPlugin
             {
-                dllModule = LoadLibrary(dllPath)
+                dllModule = LoadLibrary(dllPath),
+                appDir = pluginPath
             };
 
             //加载Dll

@@ -7,13 +7,13 @@ using CQDebuger.Window;
 namespace CQDebuger
 {
     /// <summary>
-    ///     App.xaml 的交互逻辑
+    ///     DebugerApp.xaml 的交互逻辑
     /// </summary>
-    public partial class App : Application
+    public partial class DebugerApp : Application
     {
         public const string DebugerLogCategory = "酷Q调试器";
 
-        public App()
+        public DebugerApp()
         {
             LoadCQP();
             LogWhenThrow(LoadPlugins);
@@ -47,7 +47,7 @@ namespace CQDebuger
             if (!Directory.Exists(pluginDir))
             {
                 Directory.CreateDirectory(pluginDir);
-                AddLog(DebugerLogCategory, "请将需要调试的插件放到 " + pluginDir + " 目录下，并保证dll和json文件具有相同的名称。");
+                AddLog(CQLogLevel.Warning, DebugerLogCategory, "请将需要调试的插件放到 " + pluginDir + " 目录下，并保证dll和json文件具有相同的名称。");
             }
 
             foreach (var pluginPath in Directory.GetDirectories(pluginDir))
@@ -58,7 +58,7 @@ namespace CQDebuger
 
                 if (plugin.appId != dirName)
                 {
-                    AddLog(DebugerLogCategory, "插件ID \"" + plugin.appId + "\" 与其所在文件夹名不相符， 文件夹名为 \"" + dirName + "\"");
+                    AddLog(CQLogLevel.Warning, DebugerLogCategory, "插件ID \"" + plugin.appId + "\" 与其所在文件夹名不相符， 文件夹名为 \"" + dirName + "\"");
                     continue;
                 }
                 AppInfo += plugin.appInfo;
@@ -96,16 +96,16 @@ namespace CQDebuger
             }
             catch (Exception e)
             {
-                AddLog(DebugerLogCategory, "运行时出现错误，可能是用户参数问题，也可能是程序内部或插件问题：\n" + e);
+                AddLog(CQLogLevel.Error, DebugerLogCategory, "运行时出现错误，可能是用户参数问题，也可能是程序内部或插件问题：\n" + e);
 
                 if (throwWhenError)
                     throw;
             }
         }
 
-        public static void AddLog(string category, string msg)
+        public static void AddLog(CQLogLevel logLevel, string category, string msg)
         {
-            var debugLog = new DebugLog(category, msg);
+            var debugLog = new CQLog(logLevel, category, msg);
 
             if (DebugWindow.Instance != null)
                 DebugWindow.Instance.AddLog(debugLog);
@@ -122,7 +122,7 @@ namespace CQDebuger
             string msg,
             int font)
         {
-            LogWhenThrow(() => ((App) Current).GroupMsg(subType, msgId, fromGroup, fromQQ, fromAnonymous, msg, font));
+            LogWhenThrow(() => ((DebugerApp) Current).GroupMsg(subType, msgId, fromGroup, fromQQ, fromAnonymous, msg, font));
         }
 
         public static void PrivateMsgEvent(
@@ -132,7 +132,7 @@ namespace CQDebuger
             string msg,
             int font)
         {
-            LogWhenThrow(() => ((App) Current).PrivateMsg(subType, msgId, fromQQ, msg, font));
+            LogWhenThrow(() => ((DebugerApp) Current).PrivateMsg(subType, msgId, fromQQ, msg, font));
         }
     }
 }

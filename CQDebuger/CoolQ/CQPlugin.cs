@@ -56,6 +56,8 @@ namespace CQDebuger.CoolQ
 
     public class CQPlugin
     {
+        public string appDir;
+
         public CQEvent.AddFriendRequest addFriendRequest;
         public CQEvent.AddGroupRequest addGroupRequest;
 

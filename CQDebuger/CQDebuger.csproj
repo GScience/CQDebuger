@@ -57,7 +57,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
+    <ApplicationDefinition Include="DebugerApp.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
@@ -69,8 +69,9 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
+    <Compile Include="CoolQ\CQLog.cs" />
+    <Compile Include="DebugerApp.xaml.cs">
+      <DependentUpon>DebugerApp.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Control\TextBoxWithLabel.xaml.cs">
@@ -78,7 +79,6 @@
     </Compile>
     <Compile Include="CoolQ\CQEvent.cs" />
     <Compile Include="CoolQ\CQPBridge.cs" />
-    <Compile Include="DebugLog.cs" />
     <Compile Include="Window\DebugWindow.xaml.cs">
       <DependentUpon>DebugWindow.xaml</DependentUpon>
     </Compile>
